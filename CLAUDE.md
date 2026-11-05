@@ -9,6 +9,7 @@ Throughput is J = (successes - COST_C x transmissions) / slots, with held and re
 ## Commands
 - No simulator needed: `python drone_jcc.py selftest` (1 to 2 min) and `python test_offline.py` (the AirSim code
   path against `fake_airsim_server.py`)
+- AirSim headless in this VM: `bash airsim_headless.sh setup`, then `bash airsim_headless.sh start` (`stop`, `status`)
 - AirSim preflight, with the simulator running: `python drone_jcc.py check`
 - Settings file for AirSim: `python drone_jcc.py settings --write`
 - Surrogate session: `python drone_jcc.py all --backend surrogate --run <name>`
@@ -31,11 +32,18 @@ Throughput is J = (successes - COST_C x transmissions) / slots, with held and re
 
 ## AirSim facts that matter
 - SimpleFlight hovers when no API command arrives for 60 ms (`api_goal_timeout`). That is why stepping is
-  lockstep: the simulator stays paused, each command lasts DT - CMD_MARGIN, then `simContinueForTime(DT)`.
+  lockstep: the simulator stays paused, each command lasts DT - CMD_MARGIN, then the simulator advances DT.
+- AirSim 1.8.1 runs `simContinueForTime(x)` for x seconds of wall time, so with the SteppableClock the sim clock moves
+  ClockSpeed x x (measured: 1.25 s for x = 0.25 at ClockSpeed 5). Each slot therefore calls
+  `simContinueForTime(DT / ClockSpeed)` (`CONTINUE_SCALE = "auto"`); `check` shows the sim time per slot.
 - AirSim's RPC server has (vehicles + 4) worker threads, and a move command holds one until it ends. Never send
   commands that outlast their slot.
 - A vehicle's position is relative to its own start point; markers are drawn in the world frame. The start offsets
   come from the simulator's settings.
 - `pip install airsim` fails on Python 3.10 and later (it needs tornado 4); the script's built-in client needs only
   `msgpack`.
-- So far the code has been tested only against `fake_airsim_server.py`, not against the real simulator.
+- AirSim runs in the cloud session: Blocks v1.8.1 for Linux, headless with `-nullrhi`, as the non-root user `airsim`
+  (`bash airsim_headless.sh setup`, then `start`; the log is /home/airsim/blocks.log). The container does not keep
+  it, so each new session runs `setup` again (a 143 MB download).
+- Measured in Blocks with `check` and a step test: SimpleFlight's velocity response is close to first order with a
+  time constant of 1.55 s (1.55 to 1.57 s for 2 and 3 m/s steps, the same at ClockSpeed 1 and 5).

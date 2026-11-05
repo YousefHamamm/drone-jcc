@@ -1,12 +1,11 @@
 # Task: run the drone experiment in AirSim and raise its throughput
 
 ## Where this runs
-You are in a Claude Code cloud session: an Ubuntu VM with 4 vCPUs and 16 GB of RAM, no GPU, no display and no
-AirSim. Do everything that runs without the simulator: the surrogate backend and `fake_airsim_server.py`.
+You are in a Claude Code cloud session: an Ubuntu VM with 4 vCPUs and 16 GB of RAM, no GPU and no display.
 
-The steps marked **(local)** need the real simulator on my machine. For those, write the exact commands into
-`RUN_LOCAL.md`, with what to look for in the output. I will run them after `git pull` and paste the results back
-to you.
+Everything runs in the cloud, AirSim included: Blocks v1.8.1 runs headless in this VM (`bash airsim_headless.sh
+setup`, then `bash airsim_headless.sh start`). The steps marked **(local)** below are done here too, in AirSim; there
+are no local steps and no RUN_LOCAL.md.
 
 Commit and push the branch after each step, so I can pull it in VS Code.
 

@@ -1,0 +1,5 @@
+Connected!
+[airsim] lockstep: each slot calls simContinueForTime(DT x 0.2) to advance DT of sim time
+per-slot commands, 2 m/s     tau 1.55 s, fit RMS 0.034 m/s | 0.20 0.48 0.73 0.93 1.11 1.25 1.37 1.47 1.55 1.62 1.68 1.73 1.77 1.80 1.83 1.85
+one 4 s command, 2 m/s       tau 1.56 s, fit RMS 0.034 m/s | 0.20 0.48 0.73 0.93 1.11 1.25 1.37 1.46 1.55 1.62 1.68 1.72 1.76 1.80 1.83 1.85
+per-slot commands, 3 m/s     tau 1.57 s, fit RMS 0.053 m/s | 0.29 0.71 1.08 1.40 1.65 1.87 2.05 2.20 2.32 2.42 2.51 2.58 2.64 2.69 2.72 2.76

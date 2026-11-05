@@ -1,0 +1,17 @@
+connecting to AirSim at 127.0.0.1:41451 ...
+[airsim] the official client does not import (ModuleNotFoundError: No module named 'airsim'); using the built-in one
+Connected!
+[airsim] lockstep: each slot calls simContinueForTime(DT x 0.2) to advance DT of sim time
+client: lite; vehicles: ['Drone1']; start offsets: [[0.0, 0.0, 0.0]]
+settings: ClockSpeed 5.0, ClockType SteppableClock, ViewMode SpringArmChase
+RPC round trip 0.02 ms (lite client; a slot makes 4 calls plus the drawing)
+lockstep timing (20 slots, alternating commands) ...
+  sim time per slot 0.2499 s (DT 0.25), wall time per slot 0.0921 s, 2.7 slots of sim time per wall slot
+  sim time per slot: shortest 0.2490 s, longest 0.2520 s
+velocity response (2 m/s step along x) ...
+  velocity after 1, 2, 4, 8 slots: 0.20, 0.48, 0.93, 1.47 m/s
+  velocity after each of the 16 slots: 0.20, 0.48, 0.73, 0.93, 1.11, 1.25, 1.37, 1.47, 1.55, 1.62, 1.68, 1.73, 1.77, 1.80, 1.83, 1.85 m/s
+  first-order fit: time constant 1.55 s  ->  use --set PRED_TAU=1.55 (and TAU for the surrogate)
+  fit error: RMS 0.034 m/s, largest 0.099 m/s
+markers: a red target ring 4 m north of drone 1 and a green one 4 m south ...
+  look at the AirSim window. The check is done; the drone hovers.

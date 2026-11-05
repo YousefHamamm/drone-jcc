@@ -85,8 +85,16 @@ use it even when `airsim` is installed, set `AIRSIM_CLIENT="'lite'"`.
    measured velocity time constant; set `PRED_TAU` (and `TAU` for the surrogate) to that value. It then draws a
    red and a green test marker.
 
+**Headless, without a GPU (a cloud VM).** `bash airsim_headless.sh setup` creates the user `airsim` (Unreal refuses
+to run as root), downloads the Blocks v1.8.1 Linux release into its home and writes its settings file.
+`bash airsim_headless.sh start` starts Blocks with `-nullrhi` (no rendering) in a tmux session and waits for the RPC
+port. Then run `check` and the other commands as usual. Nothing is drawn, so markers and camera images cannot be
+seen.
+
 **Stepping.** With `STEP_MODE = "lockstep"` the simulator stays paused. In each slot every drone gets one command
-lasting `DT − CMD_MARGIN`, and then `simContinueForTime(DT)` advances the simulation. There are two reasons for
+lasting `DT − CMD_MARGIN`, and then the simulator advances DT. AirSim 1.8.1 runs `simContinueForTime(x)` for x
+seconds of wall time, so with the SteppableClock the sim clock moves ClockSpeed × x; each slot therefore calls
+`simContinueForTime(DT / ClockSpeed)` (`CONTINUE_SCALE = "auto"`), and `check` shows the sim time per slot. There are two reasons for
 this. SimpleFlight switches to hover if no command arrives for 60 ms, and AirSim's RPC server has only
 (vehicles + 4) worker threads. With these settings every command ends inside its slot, the next one starts before
 the clock moves, and the server never runs out of threads for any number of drones. Training pauses do not move the
