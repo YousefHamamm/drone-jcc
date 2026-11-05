@@ -4,7 +4,8 @@ fake_airsim_server.py: a stand-in for the AirSim RPC server, to run drone_jcc.py
 
 It speaks msgpack-rpc on port 41451 (like AirSim's rpclib server), answers the calls drone_jcc.py makes, and
 simulates SimpleFlight multirotors closely enough to exercise the code paths:
-  * a steppable clock: simPause, simIsPaused, simContinueForTime (blocks until the time has run, like AirSim 1.8);
+  * a steppable clock: simPause, simIsPaused, simContinueForTime (blocks until the time has run; as in AirSim 1.8.1
+    with the SteppableClock, simContinueForTime(x) moves the sim clock by ClockSpeed x x);
   * velocity and position goals with a first-order response, SimpleFlight's 60 ms API goal timeout (after which the
     drone holds its position), takeoff, hover, moveToPosition;
   * AirSim's task semantics: a new move cancels the running one and waits for it to stop, and a running command
@@ -216,6 +217,7 @@ class FakeAirSim:
 
     def getSettingsString(self):
         return json.dumps({"SettingsVersion": 1.2, "SimMode": "Multirotor", "ClockSpeed": self.clock_speed,
+                           "ClockType": "SteppableClock",
                            "Vehicles": {nm: {"VehicleType": "SimpleFlight", "X": float(v.offset[0]),
                                              "Y": float(v.offset[1]), "Z": float(v.offset[2])}
                                         for nm, v in self.vehicles.items()}})
@@ -247,9 +249,11 @@ class FakeAirSim:
         return self.paused
 
     def simContinueForTime(self, seconds):
+        """AirSim 1.8.1 with the SteppableClock runs this for `seconds` of wall time, so the sim clock moves
+        ClockSpeed x seconds. Here the steps run as fast as they can; only the sim time matters."""
         self.stats["continues"] += 1
         self.paused = True
-        for _ in range(int(round(float(seconds) / H))):
+        for _ in range(int(round(float(seconds) * self.clock_speed / H))):
             self._advance()
         self.paused = True
 

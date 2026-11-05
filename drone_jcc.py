@@ -63,6 +63,8 @@ STEP_MODE = "lockstep"           # lockstep: paused simulator advanced DT per sl
 CMD_MARGIN = 0.03                # s; a command lasts DT - CMD_MARGIN; keep it below 0.06 (SimpleFlight's API timeout)
 CMD_SETTLE = 0.001               # s (wall) between sending the commands and advancing the simulator
 CLOCK_SPEED = 5.0                # settings.json ClockSpeed (sim seconds per wall second); too high makes physics unstable
+CONTINUE_SCALE = "auto"          # lockstep: each slot calls simContinueForTime(DT x scale); auto: 1 / ClockSpeed with
+                                 # the SteppableClock (AirSim 1.8.1 runs the call for that long in wall time), else 1
 VIEW_MODE = "SpringArmChase"     # settings.json ViewMode: SpringArmChase | FlyWithMe | Manual | GroundObserver | NoDisplay
 TAKEOFF_TIMEOUT = 20.0           # s
 RPC_TIMEOUT = 60.0               # s for one AirSim call
@@ -819,6 +821,10 @@ class AirSimBackend:
                              "Is the simulator running?") from None
         self._check_vehicles()
         self.offsets = self._spawn_offsets()
+        self.cont_scale = self._continue_scale()
+        if self.lockstep and self.cont_scale != 1.0:
+            print(f"[airsim] lockstep: each slot calls simContinueForTime(DT x {self.cont_scale:g}) to advance DT of "
+                  "sim time", flush=True)
         self._takeoff()
 
     # ---- setup ---------------------------------------------------------------------------------------------------
@@ -854,6 +860,21 @@ class AirSimBackend:
         except Exception:
             pass
         return off
+
+    def _continue_scale(self):
+        """The factor on DT in simContinueForTime. AirSim 1.8.1 with the SteppableClock runs the call for that many
+        seconds of wall time, so the sim clock moves ClockSpeed times as far (measured 4.98 to 5.00 at ClockSpeed 5)."""
+        v = self.cfg.CONTINUE_SCALE
+        if v != "auto":
+            return float(v)
+        try:
+            s = json.loads(self.c.getSettingsString())
+            k = float(s.get("ClockSpeed", 1.0))
+            if s.get("ClockType", "") == "SteppableClock" and k > 0:
+                return 1.0 / k
+        except Exception:
+            pass
+        return 1.0
 
     def _takeoff(self):
         """Unpause (a crashed run can leave the simulator paused), take off the drones that are on the ground, fly
@@ -914,7 +935,7 @@ class AirSimBackend:
         if self.lockstep:
             if float(cfg.CMD_SETTLE) > 0:  # let the server start the commands before the clock moves
                 time.sleep(float(cfg.CMD_SETTLE))
-            c.simContinueForTime(float(cfg.DT))
+            c.simContinueForTime(float(cfg.DT) * self.cont_scale)
             self._wait_paused()
         else:
             for f in futs:
