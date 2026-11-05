@@ -65,6 +65,8 @@ CMD_SETTLE = 0.001               # s (wall) between sending the commands and adv
 CLOCK_SPEED = 5.0                # settings.json ClockSpeed (sim seconds per wall second); too high makes physics unstable
 CONTINUE_SCALE = "auto"          # lockstep: each slot calls simContinueForTime(DT x scale); auto: 1 / ClockSpeed with
                                  # the SteppableClock (AirSim 1.8.1 runs the call for that long in wall time), else 1
+SLOT_TOPUPS = 50                 # lockstep: a slot that comes out short of DT (a busy CPU slows the simulator, and the
+                                 # continue counts wall time) is continued for the rest, up to this many times; 0 = off
 VIEW_MODE = "SpringArmChase"     # settings.json ViewMode: SpringArmChase | FlyWithMe | Manual | GroundObserver | NoDisplay
 TAKEOFF_TIMEOUT = 20.0           # s
 RPC_TIMEOUT = 60.0               # s for one AirSim call
@@ -826,7 +828,8 @@ class AirSimBackend:
         if self.lockstep and self.cont_scale != 1.0:
             print(f"[airsim] lockstep: each slot calls simContinueForTime(DT x {self.cont_scale:g}) to advance DT of "
                   "sim time", flush=True)
-        self._ts, self.slot_dt = None, [0, float("inf"), 0.0, 0]  # slots, shortest, longest, off by more than 10%
+        # slots, shortest, longest (s of sim time), off DT by more than 10%, topped up
+        self._ts, self.slot_dt = None, [0, float("inf"), 0.0, 0, 0]
         self._takeoff()
 
     # ---- setup ---------------------------------------------------------------------------------------------------
@@ -948,21 +951,32 @@ class AirSimBackend:
         return self.read()
 
     def _track_slot(self):
-        """The sim time of the slot, from drone 1's clock. The simulator counts the continue in wall time, so a
-        simulator that falls behind (a busy CPU) makes the slots shorter than DT; this warns when that happens."""
+        """Complete the slot to DT of sim time, from drone 1's clock. The simulator counts the continue in wall time,
+        so when it falls behind (a busy CPU) a slot comes out short. It is then continued for the rest, up to
+        SLOT_TOPUPS times (for at most 10 s of wall time), until it is within 6 ms (two physics steps of 3 ms) of DT.
+        The physics stays the same: each step is 3 ms of sim time, and nothing moves between the continues."""
+        c, nm, dt, s = self.c, self.names[0], float(self.cfg.DT), self.slot_dt
         try:
-            ts = self.c.getMultirotorState(self.names[0]).timestamp
+            ts = c.getMultirotorState(nm).timestamp
         except Exception:
             return
-        if self._ts is not None:
-            d, s, dt = (ts - self._ts) / 1e9, self.slot_dt, float(self.cfg.DT)
-            s[0] += 1
-            s[1], s[2] = min(s[1], d), max(s[2], d)
-            if abs(d - dt) > 0.1 * dt:
-                s[3] += 1
-                if s[3] <= 3 or s[3] % 100 == 0:
-                    print(f"[airsim] a slot took {d:.4f} s of sim time instead of DT = {dt:g} ({s[3]} such slots of "
-                          f"{s[0]}); is the CPU busy?", flush=True)
+        if self._ts is None:
+            self._ts = ts
+            return
+        d, tops, t0 = (ts - self._ts) / 1e9, 0, time.time()
+        while dt - d > 0.006 and tops < int(self.cfg.SLOT_TOPUPS) and time.time() - t0 < 10.0:
+            c.simContinueForTime((dt - d) * self.cont_scale)
+            self._wait_paused()
+            ts = c.getMultirotorState(nm).timestamp
+            d, tops = (ts - self._ts) / 1e9, tops + 1
+        s[0] += 1
+        s[1], s[2] = min(s[1], d), max(s[2], d)
+        s[4] += tops > 0
+        if abs(d - dt) > 0.1 * dt:
+            s[3] += 1
+            if s[3] <= 3 or s[3] % 100 == 0:
+                print(f"[airsim] a slot took {d:.4f} s of sim time instead of DT = {dt:g} ({s[3]} such slots of "
+                      f"{s[0]}); is the CPU busy?", flush=True)
         self._ts = ts
 
     def _wait_paused(self):
@@ -1035,7 +1049,7 @@ class AirSimBackend:
         s = getattr(self, "slot_dt", [0])
         if s[0]:
             print(f"[airsim] sim time per slot over {s[0]} slots: {s[1]:.4f} to {s[2]:.4f} s (DT {self.cfg.DT:g}); "
-                  f"{s[3]} off by more than 10%", flush=True)
+                  f"{s[4]} topped up to DT, {s[3]} still off by more than 10%", flush=True)
         try:
             if self.cfg.WIND_STD > 0:
                 self.c.simSetWind(self.A.Vector3r(0.0, 0.0, 0.0))
@@ -2101,14 +2115,14 @@ def train_phase(cfg, phase, run_dir, init_path=None, dashboard=True, backend=Non
                 pbar.set_postfix(J=f"{s['J']:.4f}", succ=f"{s['succ_rate']:.2f}", send=f"{s['sends_per_task']:.1f}",
                                  p=f"{s['send_prob']:.2f}", lam=f"{lam:.3f}", kl=f"{info['kl']:.3f}")
                 if upd == 1 or upd % int(cfg.LOG_EVERY) == 0 or upd == n_upd:
-                    sd = getattr(backend, "slot_dt", None)  # AirSim: slots whose sim time was more than 10% off DT
+                    sd = getattr(backend, "slot_dt", None)  # AirSim: slots topped up to DT, and still off by > 10%
                     tqdm.write(f"[{phase}] update {upd}/{n_upd}  slots {slots}  J {s['J']:.4f} (ema {J_ema:.4f})  "
                                f"success {s['succ_rate']:.3f}  slots/task {s['task_slots']:.1f}  "
                                f"sends/task {s['sends_per_task']:.2f}  send prob {s['send_prob']:.2f}  "
                                f"fails out/time/coll {int(s['fail_out'])}/{int(s['fail_timeout'])}/"
                                f"{int(s['fail_collision'])}  price {lam:.4f}  kl {info['kl']:.4f}  lr {info['lr']:.1e}  "
                                f"std {math.exp(info['log_std']):.2f}  [{time.time() - t0:.0f}s]"
-                               + (f"  short slots {sd[3]}/{sd[0]}" if sd and sd[0] else ""))
+                               + (f"  slots topped up {sd[4]}/{sd[0]}, off {sd[3]}" if sd and sd[0] else ""))
         except KeyboardInterrupt:
             tqdm.write(f"[{phase}] interrupted at update {upd}; the latest checkpoint is {ck_latest}")
             raise
