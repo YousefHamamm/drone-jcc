@@ -13,3 +13,9 @@
 [joint_pull] update 50/80  slots 25600  J 0.0466 (ema 0.0463)  success 1.000  slots/task 18.7  sends/task 4.60  send prob 0.24  fails out/time/coll 0/0/0  price 0.0464  kl 0.0252  lr 8.9e-05  std 0.04  [2486s]  slots topped up 1471/25600, off 0
 [joint_pull] update 55/80  slots 28160  J 0.0422 (ema 0.0458)  success 1.000  slots/task 19.9  sends/task 6.09  send prob 0.30  fails out/time/coll 0/0/0  price 0.0461  kl 0.0440  lr 5.9e-05  std 0.04  [2736s]  slots topped up 1617/28160, off 0
 [joint_pull] update 60/80  slots 30720  J 0.0444 (ema 0.0458)  success 1.000  slots/task 19.1  sends/task 5.25  send prob 0.27  fails out/time/coll 0/0/0  price 0.0461  kl 0.0226  lr 5.9e-05  std 0.04  [2987s]  slots topped up 1801/30720, off 0
+[joint_pull] update 65/80  slots 33280  J 0.0444 (ema 0.0458)  success 1.000  slots/task 18.9  sends/task 5.25  send prob 0.26  fails out/time/coll 0/0/0  price 0.0460  kl 0.0192  lr 5.9e-05  std 0.04  [3240s]  slots topped up 1981/33280, off 0
+[joint_pull] update 70/80  slots 35840  J 0.0443 (ema 0.0457)  success 1.000  slots/task 20.1  sends/task 5.54  send prob 0.29  fails out/time/coll 0/0/0  price 0.0460  kl 0.0156  lr 5.9e-05  std 0.04  [3490s]  slots topped up 2138/35840, off 0
+[joint_pull] update 75/80  slots 38400  J 0.0444 (ema 0.0458)  success 1.000  slots/task 19.3  sends/task 5.33  send prob 0.28  fails out/time/coll 0/0/0  price 0.0460  kl 0.0164  lr 5.9e-05  std 0.04  [3740s]  slots topped up 2275/38400, off 0
+[joint_pull] update 80/80  slots 40960  J 0.0444 (ema 0.0461)  success 1.000  slots/task 19.3  sends/task 5.21  send prob 0.28  fails out/time/coll 0/0/0  price 0.0461  kl 0.0213  lr 5.9e-05  std 0.04  [3990s]  slots topped up 2427/40960, off 0
+[joint_pull] done in 3990s; final J_ema 0.0461; checkpoint runs/air/joint_pull/ckpt_latest.pt
+[airsim] sim time per slot over 40960 slots: 0.2310 to 0.2730 s (DT 0.25); 2427 topped up to DT, 0 still off by more than 10%
