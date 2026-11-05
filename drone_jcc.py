@@ -2703,6 +2703,7 @@ def cmd_check(cfg):
             wall.append(time.time() - t0)
         print(f"  sim time per slot {np.mean(ts):.4f} s (DT {cfg.DT}), wall time per slot {np.mean(wall):.4f} s, "
               f"{float(cfg.DT) / max(np.mean(wall), 1e-9):.1f} slots of sim time per wall slot")
+        print(f"  sim time per slot: shortest {min(ts):.4f} s, longest {max(ts):.4f} s")
         if abs(np.mean(ts) - float(cfg.DT)) > 0.25 * float(cfg.DT):
             print("  [warning] the sim time per slot differs from DT: try STEP_MODE=realtime or check ClockType")
         print("velocity response (2 m/s step along x) ...", flush=True)
@@ -2718,8 +2719,11 @@ def cmd_check(cfg):
         errs = [np.sum((vs - 2.0 * (1 - np.exp(-float(cfg.DT) * (np.arange(16) + 1) / tt))) ** 2) for tt in taus]
         tau = float(taus[int(np.argmin(errs))])
         print(f"  velocity after 1, 2, 4, 8 slots: {vs[0]:.2f}, {vs[1]:.2f}, {vs[3]:.2f}, {vs[7]:.2f} m/s")
+        print("  velocity after each of the 16 slots: " + ", ".join(f"{v:.2f}" for v in vs) + " m/s")
         print(f"  first-order fit: time constant {tau:.2f} s  ->  use --set PRED_TAU={tau:.2f} (and TAU for the "
               "surrogate)")
+        res = vs - 2.0 * (1 - np.exp(-float(cfg.DT) * (np.arange(16) + 1) / tau))
+        print(f"  fit error: RMS {np.sqrt(np.mean(res ** 2)):.3f} m/s, largest {np.max(np.abs(res)):.3f} m/s")
         for _ in range(12):
             b.step(np.zeros((n, b.D)))
         print("markers: a red target ring 4 m north of drone 1 and a green one 4 m south ...", flush=True)

@@ -44,8 +44,10 @@ Paste the whole output. This is what I look for:
 | `settings: ClockSpeed ..., ClockType ...` | `ClockSpeed 5.0, ClockType SteppableClock` |
 | `RPC round trip ... ms` | the number; it sets how fast training runs in AirSim |
 | `sim time per slot ... s (DT 0.25), wall time per slot ... s` | sim time per slot close to 0.25 s, and no `[warning]` line after it |
-| `velocity after 1, 2, 4, 8 slots: ...` | speeds that rise toward 2 m/s |
+| `sim time per slot: shortest ... s, longest ... s` | both close to 0.25 s; their difference is the slot jitter |
+| `velocity after 1, 2, 4, 8 slots: ...` and `velocity after each of the 16 slots: ...` | speeds that rise toward 2 m/s |
 | `first-order fit: time constant ... s` | the measured time constant; I will set `PRED_TAU` and `TAU` to it |
+| `fit error: RMS ... m/s, largest ... m/s` | how far the measured speeds are from the fitted first-order response |
 
 Also tell me whether a red ring appeared 4 m north of the drone and a green ring 4 m south, with the text
 "drone_jcc check" in the AirSim window.
