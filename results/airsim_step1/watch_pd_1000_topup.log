@@ -1,0 +1,4 @@
+[airsim] lockstep: each slot calls simContinueForTime(DT x 0.2) to advance DT of sim time
+[watch] scheduler always, controller pd; airsim; Ctrl+C to stop; folder runs/air_watch_pd_topup2
+[watch] 1000 slots: J 0.0308, 40 successes, 0 failures, sends/task 23.00; logs in runs/air_watch_pd_topup2
+[airsim] sim time per slot over 1000 slots: 0.2340 to 0.2520 s (DT 0.25); 51 topped up to DT, 0 still off by more than 10%
