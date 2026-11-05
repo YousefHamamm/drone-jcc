@@ -76,9 +76,15 @@ python -c "import csv, collections; print(collections.Counter(r['outcome'] for r
 It should count only `success`. A `collision` means something in the arena is in the drone's way: raise the plane
 of the targets with `--set ALTITUDE=10`, or move the PlayerStart.
 
-For comparison, on the surrogate this controller takes 13.7 slots per task, plus 2 held slots after each success,
-and gets J = 0.0551 (README.md, "PD controller, always send"). So 500 slots should hold about 32 tasks, with J
-about 0.055.
+For comparison, the same 500 slots on the surrogate gave 30 to 33 successes, no failures and J from 0.051 to 0.057
+(mean 0.054) over seeds 1 to 10:
+
+```
+python drone_jcc.py watch --backend surrogate --slots 500 --no-dashboard --set WATCH_REALTIME=False --set SEED=1
+```
+
+Numbers well below that range in AirSim mean AirSim and the surrogate differ. A slower velocity response is one
+possible cause, and the time constant from 1a shows whether it is the cause.
 
 When you paste these results, I will fix whatever breaks against the real simulator and set `PRED_TAU` and `TAU`
 to the measured time constant.
