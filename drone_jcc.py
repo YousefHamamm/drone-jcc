@@ -2101,12 +2101,14 @@ def train_phase(cfg, phase, run_dir, init_path=None, dashboard=True, backend=Non
                 pbar.set_postfix(J=f"{s['J']:.4f}", succ=f"{s['succ_rate']:.2f}", send=f"{s['sends_per_task']:.1f}",
                                  p=f"{s['send_prob']:.2f}", lam=f"{lam:.3f}", kl=f"{info['kl']:.3f}")
                 if upd == 1 or upd % int(cfg.LOG_EVERY) == 0 or upd == n_upd:
+                    sd = getattr(backend, "slot_dt", None)  # AirSim: slots whose sim time was more than 10% off DT
                     tqdm.write(f"[{phase}] update {upd}/{n_upd}  slots {slots}  J {s['J']:.4f} (ema {J_ema:.4f})  "
                                f"success {s['succ_rate']:.3f}  slots/task {s['task_slots']:.1f}  "
                                f"sends/task {s['sends_per_task']:.2f}  send prob {s['send_prob']:.2f}  "
                                f"fails out/time/coll {int(s['fail_out'])}/{int(s['fail_timeout'])}/"
                                f"{int(s['fail_collision'])}  price {lam:.4f}  kl {info['kl']:.4f}  lr {info['lr']:.1e}  "
-                               f"std {math.exp(info['log_std']):.2f}  [{time.time() - t0:.0f}s]")
+                               f"std {math.exp(info['log_std']):.2f}  [{time.time() - t0:.0f}s]"
+                               + (f"  short slots {sd[3]}/{sd[0]}" if sd and sd[0] else ""))
         except KeyboardInterrupt:
             tqdm.write(f"[{phase}] interrupted at update {upd}; the latest checkpoint is {ck_latest}")
             raise
