@@ -14,3 +14,8 @@
 [joint_push] update 55/80  slots 28160  J 0.0489 (ema 0.0474)  success 1.000  slots/task 17.7  sends/task 3.69  send prob 0.21  fails out/time/coll 0/0/0  price 0.0469  kl 0.0404  lr 5.9e-05  std 0.04  [2739s]  slots topped up 1650/28160, off 0
 [joint_push] update 60/80  slots 30720  J 0.0446 (ema 0.0464)  success 1.000  slots/task 19.2  sends/task 4.88  send prob 0.25  fails out/time/coll 0/0/0  price 0.0465  kl 0.0130  lr 5.9e-05  std 0.04  [2989s]  slots topped up 1787/30720, off 0
 [joint_push] update 65/80  slots 33280  J 0.0526 (ema 0.0469)  success 1.000  slots/task 16.8  sends/task 3.89  send prob 0.24  fails out/time/coll 0/0/0  price 0.0467  kl 0.0145  lr 5.9e-05  std 0.04  [3240s]  slots topped up 1960/33280, off 0
+[joint_push] update 70/80  slots 35840  J 0.0464 (ema 0.0468)  success 1.000  slots/task 18.8  sends/task 5.00  send prob 0.28  fails out/time/coll 0/0/0  price 0.0467  kl 0.0116  lr 5.9e-05  std 0.04  [3489s]  slots topped up 2101/35840, off 0
+[joint_push] update 75/80  slots 38400  J 0.0466 (ema 0.0466)  success 1.000  slots/task 17.8  sends/task 4.60  send prob 0.23  fails out/time/coll 0/0/0  price 0.0466  kl 0.0312  lr 5.9e-05  std 0.04  [3739s]  slots topped up 2239/38400, off 0
+[joint_push] update 80/80  slots 40960  J 0.0469 (ema 0.0474)  success 1.000  slots/task 18.7  sends/task 3.96  send prob 0.22  fails out/time/coll 0/0/0  price 0.0470  kl 0.0182  lr 5.9e-05  std 0.04  [3988s]  slots topped up 2370/40960, off 0
+[joint_push] done in 3988s; final J_ema 0.0474; checkpoint runs/air/joint_push/ckpt_latest.pt
+[airsim] sim time per slot over 40960 slots: 0.2310 to 0.2520 s (DT 0.25); 2370 topped up to DT, 0 still off by more than 10%
