@@ -1,0 +1,4 @@
+[airsim] the official client does not import (ModuleNotFoundError: No module named 'airsim'); using the built-in one
+[airsim] lockstep: each slot calls simContinueForTime(DT x 0.2) to advance DT of sim time
+[watch] scheduler always, controller pd; airsim; Ctrl+C to stop; folder runs/air_watch_pd_tau155
+[watch] 500 slots: J 0.0288, 19 successes, 0 failures, sends/task 24.32; logs in runs/air_watch_pd_tau155

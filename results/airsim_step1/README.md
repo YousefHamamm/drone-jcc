@@ -13,6 +13,13 @@ and the SteppableClock. `check` and `watch` ran with the parameters of that time
 | `watch_pd_500.log` | `python drone_jcc.py watch --slots 500 --run air_watch_pd --no-dashboard --set WATCH_REALTIME=False` | 16 successes, 0 failures, J 0.0226 |
 | `analyze_air_watch_pd.md`, `air_watch_pd_tasks.csv` | `python analyze_tasks.py runs/air_watch_pd` | 26.88 slots per successful task: 10.69 accelerating, 4.31 cruising, 11.88 landing |
 
+With `TAU = PRED_TAU = 1.55` (the new defaults), the PD controller was flown again in both:
+
+| file | command | what it shows |
+|---|---|---|
+| `watch_pd_500_tau155.log`, `air_watch_pd_tau155_tasks.csv` | `python drone_jcc.py watch --slots 500 --run air_watch_pd_tau155 --no-dashboard --set WATCH_REALTIME=False` | AirSim: 19 successes, 0 failures, J 0.0288 |
+| `analyze_air_vs_surr_tau155.md` | `python analyze_tasks.py runs/air_watch_pd_tau155 runs/surr_watch_pd_tau155`, the second from `python drone_jcc.py watch --backend surrogate --slots 4000 --run surr_watch_pd_tau155 --no-dashboard --set WATCH_REALTIME=False` | 23.47 slots per task in AirSim against 22.64 on the surrogate; accelerating 11.21 against 11.43, landing 6.74 against 5.09 |
+
 The same 500-slot PD watch on the surrogate (with `TAU = PRED_TAU = 0.35`) gave 30 to 33 successes and J from 0.051 to
 0.057 over seeds 1 to 10, and 13.76 slots per task over 4000 slots.
 
