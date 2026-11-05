@@ -1,0 +1,9 @@
+[joint_push] controller, critic and scheduler start from runs/surr_tau155/joint_push/ckpt_latest.pt (price 0.0470)
+[joint_push] airsim, 1 env(s), 80 updates of 512 slots; scheduler learned push, controller agent; p_s 0.6, C 0.01; run folder runs/air/joint_push
+[joint_push] update 1/80  slots 512  J 0.0465 (ema 0.0465)  success 1.000  slots/task 18.0  sends/task 4.76  send prob 0.25  fails out/time/coll 0/0/0  price 0.0470  kl 0.1136  lr 2.0e-04  std 0.04  [49s]  slots topped up 25/512, off 0
+[joint_push] update 5/80  slots 2560  J 0.0490 (ema 0.0464)  success 1.000  slots/task 17.7  sends/task 3.46  send prob 0.19  fails out/time/coll 0/0/0  price 0.0469  kl 0.0280  lr 8.9e-05  std 0.04  [248s]  slots topped up 149/2560, off 0
+[joint_push] update 10/80  slots 5120  J 0.0463 (ema 0.0462)  success 1.000  slots/task 18.6  sends/task 5.20  send prob 0.28  fails out/time/coll 0/0/0  price 0.0467  kl 0.0184  lr 5.9e-05  std 0.04  [496s]  slots topped up 276/5120, off 0
+[joint_push] update 15/80  slots 7680  J 0.0444 (ema 0.0464)  success 1.000  slots/task 19.3  sends/task 5.25  send prob 0.26  fails out/time/coll 0/0/0  price 0.0467  kl 0.0154  lr 5.9e-05  std 0.04  [745s]  slots topped up 421/7680, off 0
+[joint_push] update 20/80  slots 10240  J 0.0444 (ema 0.0459)  success 1.000  slots/task 19.2  sends/task 5.33  send prob 0.27  fails out/time/coll 0/0/0  price 0.0463  kl 0.0190  lr 5.9e-05  std 0.04  [993s]  slots topped up 556/10240, off 0
+[joint_push] update 25/80  slots 12800  J 0.0428 (ema 0.0459)  success 1.000  slots/task 19.5  sends/task 4.78  send prob 0.22  fails out/time/coll 0/0/0  price 0.0463  kl 0.0163  lr 5.9e-05  std 0.04  [1242s]  slots topped up 700/12800, off 0
+[joint_push] update 30/80  slots 15360  J 0.0466 (ema 0.0460)  success 1.000  slots/task 18.4  sends/task 4.52  send prob 0.25  fails out/time/coll 0/0/0  price 0.0462  kl 0.0174  lr 8.9e-05  std 0.04  [1491s]  slots topped up 863/15360, off 0
