@@ -3,3 +3,4 @@ Connected!
 [airsim] lockstep: each slot calls simContinueForTime(DT x 0.2) to advance DT of sim time
 [eval] 5 policies, 6 replications x 3000 slots each, AirSim; folder runs/air/eval
   always send (AirSim always_send)                     J 0.0400 +- 0.0013   success 1.000   sends/task 18.39   slots/task 18.3
+  push, surrogate (no fine-tuning)                     J 0.0464 +- 0.0017   success 1.000   sends/task 4.42   slots/task 18.5

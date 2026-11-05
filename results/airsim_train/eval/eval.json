@@ -27,6 +27,34 @@
    "reps": 6,
    "slots_per_rep": 3000,
    "seconds": 1904.1819400787354
+  },
+  {
+   "label": "push, surrogate (no fine-tuning)",
+   "sched": "learned",
+   "param": null,
+   "controller": "agent",
+   "ckpt": "runs/surr_tau155/joint_push/ckpt_latest.pt",
+   "overrides": {},
+   "reference": false,
+   "J": 0.04635388888888889,
+   "J_ci": 0.0016530799512861735,
+   "J_reps": [
+    0.047606666666666665,
+    0.046086666666666665,
+    0.04361333333333334,
+    0.047926666666666666,
+    0.04706333333333333,
+    0.04582666666666666
+   ],
+   "tasks_per_slot": 0.048499999999999995,
+   "sends_per_slot": 0.2146111111111111,
+   "sends_per_task": 4.424971363115693,
+   "deliv_per_task": 2.6391752577319587,
+   "succ_rate": 1.0,
+   "task_slots": 18.540664375715924,
+   "reps": 6,
+   "slots_per_rep": 3000,
+   "seconds": 2054.804347515106
   }
  ],
  "params": {
