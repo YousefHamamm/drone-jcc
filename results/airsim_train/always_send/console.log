@@ -20,3 +20,5 @@
 [always_send] update 85/586  slots 43520  J 0.0358 (ema 0.0396)  success 1.000  slots/task 19.9  sends/task 20.26  send prob 1.00  fails out/time/coll 0/0/0  price 0.0398  kl 0.0177  lr 1.3e-04  std 0.07  [4227s]  slots topped up 2938/43520, off 0
 [always_send] update 90/586  slots 46080  J 0.0418 (ema 0.0397)  success 1.000  slots/task 17.5  sends/task 17.69  send prob 1.00  fails out/time/coll 0/0/0  price 0.0398  kl 0.0147  lr 8.9e-05  std 0.07  [4474s]  slots topped up 3089/46080, off 0
 [always_send] update 95/586  slots 48640  J 0.0418 (ema 0.0398)  success 1.000  slots/task 18.3  sends/task 17.69  send prob 1.00  fails out/time/coll 0/0/0  price 0.0399  kl 0.0133  lr 8.9e-05  std 0.07  [4721s]  slots topped up 3233/48640, off 0
+[always_send] interrupted at update 99; the latest checkpoint is runs/air_always_send/ckpt_latest.pt
+[airsim] sim time per slot over 50182 slots: 0.2340 to 0.2730 s (DT 0.25); 3324 topped up to DT, 0 still off by more than 10%
