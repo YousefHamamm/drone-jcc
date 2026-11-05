@@ -94,9 +94,10 @@ RESET_SLOTS = 20                 # Delta_F: slots to bring the drone back after 
 MAX_TASK_SLOTS = 120             # a task that takes longer is a failure (0 = no limit)
 COLLISION_IS_FAILURE = True
 PHYSICAL_PENALTY = True          # True: held and reset slots are flown (hover); False: they are only counted
-TAU = 0.35                       # s: velocity response time constant of the surrogate drone
+TAU = 1.55                       # s: velocity response time constant of the surrogate drone (SimpleFlight in Blocks
+                                 # 1.8.1, measured with `check`; it was 0.35 before that measurement)
 ACC_MAX = 8.0                    # m/s^2: acceleration limit of the surrogate drone
-PRED_TAU = 0.35                  # s: time constant the controller uses to predict (`check` measures AirSim's)
+PRED_TAU = 1.55                  # s: time constant the controller uses to predict (`check` measures AirSim's)
 
 # ---- channel and information ---------------------------------------------------------------------------------------
 P_S = 0.6                        # delivery probability of a transmission

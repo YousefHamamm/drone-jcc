@@ -185,12 +185,13 @@ Ctrl+C stops a run and keeps the latest checkpoint and the logs.
 | `HOLD_SLOTS`, `RESET_SLOTS`, `MAX_TASK_SLOTS` | 2, 20, 120 | Δ_S, Δ_F, timeout |
 | `LOSS_VISIBLE`, `SENDER_KNOWS_TARGET` | True, True | information structure |
 | `TOTAL_SLOTS`, `TOTAL_SLOTS_AIRSIM` | 4M, 300k | training length per phase |
-| `PRED_TAU` | 0.35 s | the controller's model of the velocity response (`check` measures it) |
+| `PRED_TAU`, `TAU` | 1.55 s, 1.55 s | the controller's model of the velocity response, and the surrogate's (`check` measured 1.55 s for SimpleFlight) |
 
 ## Reference numbers (surrogate, default parameters)
 
 One `all` session on the surrogate: 3M slots per phase (the default is now 4M), p_s = 0.6, C = 0.01. The
 evaluation used 16 replications of 20,000 slots on common random numbers; the files are in `example_results/`.
+These numbers are from before `TAU` and `PRED_TAU` were set to SimpleFlight's measured 1.55 s; they used 0.35 s.
 
 | policy | J (95% CI) | vs always send | sends per task | slots per task |
 |---|---|---|---|---|
@@ -219,7 +220,9 @@ sweep over C and p_s, and longer joint training, would tell the two apart.
 ## Notes
 
 * The surrogate models the drone with a first-order velocity response and an acceleration limit. Set its `TAU` to
-  the value `check` measures, so that the policies trained on it transfer.
+  the value `check` measures, so that the policies trained on it transfer. For SimpleFlight in Blocks 1.8.1 it is
+  1.55 s; the measured response also starts more slowly than a first-order one (0.20 m/s after the first slot of a
+  2 m/s step, against 0.30 m/s for the fit).
 * In AirSim, a vehicle's position is relative to its own start point, while markers are drawn in the world frame.
   The script reads each vehicle's start offset from the simulator's settings.
 * A deterministic evaluation (`EVAL_DETERMINISTIC`) sends if and only if the learned probability exceeds 0.5. The
