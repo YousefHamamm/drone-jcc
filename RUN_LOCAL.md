@@ -90,3 +90,22 @@ possible cause, and the time constant from 1a shows whether it is the cause.
 
 When you paste these results, I will fix whatever breaks against the real simulator and set `PRED_TAU` and `TAU`
 to the measured time constant.
+
+## Step 2: where the slots go in the AirSim run
+
+Run this right after 1b, so that you can paste both results together. It needs no simulator, only the logs of 1b:
+
+```
+python analyze_tasks.py runs/air_watch_pd
+```
+
+Paste the table it prints. It also writes `runs/air_watch_pd/task_analysis.csv`, with one row per task.
+
+For comparison, a 4000-slot run of the same controller on the surrogate gave 13.76 slots per successful task
+against a straight-line bound of 10.90: 3.04 slots accelerating, 8.65 cruising and 2.06 landing. J was 0.0547 per
+slot, which is 0.219 tasks per second. The commands:
+
+```
+python drone_jcc.py watch --backend surrogate --slots 4000 --run surr_watch_pd --no-dashboard --set WATCH_REALTIME=False
+python analyze_tasks.py runs/surr_watch_pd
+```
