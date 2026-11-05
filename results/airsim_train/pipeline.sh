@@ -11,6 +11,8 @@
 #   bash results/airsim_train/pipeline.sh pusher   every 30 minutes, copy the checkpoints, train logs and learning
 #                                                  curves into results/airsim_train/ and push them
 #   bash results/airsim_train/pipeline.sh push     do that once, now
+#   bash results/airsim_train/pipeline.sh eval     only the evaluation, keeping the policies already evaluated (used
+#                                                  after the machine restarted during the evaluation)
 #
 # Start check: when a joint phase has CHECK_UPDATES updates, the mean J of those updates is compared with the
 # surrogate's J for the same policy with sampled actions (its evaluation). If it is more than CHECK_DROP below, the
@@ -66,7 +68,7 @@ push_results() {  # $1: what the commit is about
       mkdir -p "$d"
       cp "$S/eval/eval.json" "$S/eval/eval.csv" "$d/" 2>/dev/null
       cp "$S/eval/summary.md" "$S"/eval/plots/*.png "$d/" 2>/dev/null
-      [ -f "$S/eval.log" ] && tr '\r' '\n' < "$S/eval.log" | grep -av "^eval:\|^\s*$" > "$d/console.log"
+      cat "$S/eval.log" "$S/eval_resume.log" 2>/dev/null | tr '\r' '\n' | grep -av "^eval:\|^\s*$" > "$d/console.log"
     fi
     git add results/airsim_train
     git diff --cached --quiet -- results/airsim_train && exit 0
@@ -148,6 +150,13 @@ case "${1:-}" in
     phase_run joint_pull || { log "pipeline halted after the joint_pull start check"; exit 1; }
     log "evaluate five policies in AirSim"
     python results/airsim_train/eval_five.py "$S" "$SURR" "${COMMON[@]}" "${EVAL_SETS[@]}" > "$S/eval.log" 2>&1
+    log "evaluation exited with code $?"
+    push_results "evaluation of five policies"
+    log "pipeline done"
+    ;;
+  eval)
+    log "evaluate the five policies in AirSim; the ones already in $S/eval/eval.json are kept"
+    python results/airsim_train/eval_five.py "$S" "$SURR" "${COMMON[@]}" "${EVAL_SETS[@]}" > "$S/eval_resume.log" 2>&1
     log "evaluation exited with code $?"
     push_results "evaluation of five policies"
     log "pipeline done"
