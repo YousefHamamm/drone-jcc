@@ -826,6 +826,7 @@ class AirSimBackend:
         if self.lockstep and self.cont_scale != 1.0:
             print(f"[airsim] lockstep: each slot calls simContinueForTime(DT x {self.cont_scale:g}) to advance DT of "
                   "sim time", flush=True)
+        self._ts, self.slot_dt = None, [0, float("inf"), 0.0, 0]  # slots, shortest, longest, off by more than 10%
         self._takeoff()
 
     # ---- setup ---------------------------------------------------------------------------------------------------
@@ -906,6 +907,7 @@ class AirSimBackend:
             f.join()
         if self.lockstep:
             c.simPause(True)
+            self._ts = c.getMultirotorState(self.names[0]).timestamp
         for i, nm in enumerate(self.names):
             self._col_ts[i] = c.simGetCollisionInfo(nm).time_stamp
 
@@ -938,11 +940,30 @@ class AirSimBackend:
                 time.sleep(float(cfg.CMD_SETTLE))
             c.simContinueForTime(float(cfg.DT) * self.cont_scale)
             self._wait_paused()
+            self._track_slot()
         else:
             for f in futs:
                 f.join()
         del futs  # unjoined futures: their replies are discarded
         return self.read()
+
+    def _track_slot(self):
+        """The sim time of the slot, from drone 1's clock. The simulator counts the continue in wall time, so a
+        simulator that falls behind (a busy CPU) makes the slots shorter than DT; this warns when that happens."""
+        try:
+            ts = self.c.getMultirotorState(self.names[0]).timestamp
+        except Exception:
+            return
+        if self._ts is not None:
+            d, s, dt = (ts - self._ts) / 1e9, self.slot_dt, float(self.cfg.DT)
+            s[0] += 1
+            s[1], s[2] = min(s[1], d), max(s[2], d)
+            if abs(d - dt) > 0.1 * dt:
+                s[3] += 1
+                if s[3] <= 3 or s[3] % 100 == 0:
+                    print(f"[airsim] a slot took {d:.4f} s of sim time instead of DT = {dt:g} ({s[3]} such slots of "
+                          f"{s[0]}); is the CPU busy?", flush=True)
+        self._ts = ts
 
     def _wait_paused(self):
         """Current AirSim returns from simContinueForTime when the time has run; older versions return at once and
@@ -1011,6 +1032,10 @@ class AirSimBackend:
 
     def close(self):
         """Leave the drones hovering: the hover commands go out before the simulator runs again."""
+        s = getattr(self, "slot_dt", [0])
+        if s[0]:
+            print(f"[airsim] sim time per slot over {s[0]} slots: {s[1]:.4f} to {s[2]:.4f} s (DT {self.cfg.DT:g}); "
+                  f"{s[3]} off by more than 10%", flush=True)
         try:
             if self.cfg.WIND_STD > 0:
                 self.c.simSetWind(self.A.Vector3r(0.0, 0.0, 0.0))
