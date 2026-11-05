@@ -26,7 +26,9 @@
    "task_slots": 18.31370328425821,
    "reps": 6,
    "slots_per_rep": 3000,
-   "seconds": 1904.1819400787354
+   "seconds": 1904.1819400787354,
+   "diff_vs_first": 0.0,
+   "diff_ci": 0.0
   },
   {
    "label": "push, surrogate (no fine-tuning)",
@@ -54,7 +56,9 @@
    "task_slots": 18.540664375715924,
    "reps": 6,
    "slots_per_rep": 3000,
-   "seconds": 2054.804347515106
+   "seconds": 2054.804347515106,
+   "diff_vs_first": 0.006317222222222221,
+   "diff_ci": 0.0006111381405004463
   },
   {
    "label": "pull, surrogate (no fine-tuning)",
@@ -82,7 +86,69 @@
    "task_slots": 18.514840182648403,
    "reps": 6,
    "slots_per_rep": 3000,
-   "seconds": 2048.684351682663
+   "seconds": 2048.684351682663,
+   "diff_vs_first": 0.006344444444444444,
+   "diff_ci": 0.0005344624899037321
+  },
+  {
+   "label": "push, fine-tuned in AirSim",
+   "sched": "learned",
+   "param": null,
+   "controller": "agent",
+   "ckpt": "runs/air/joint_push/ckpt_latest.pt",
+   "overrides": {},
+   "reference": false,
+   "J": 0.04646944444444445,
+   "J_ci": 0.0009888963856269368,
+   "J_reps": [
+    0.047126666666666664,
+    0.046836666666666665,
+    0.04494666666666667,
+    0.04751666666666667,
+    0.046586666666666665,
+    0.045803333333333335
+   ],
+   "tasks_per_slot": 0.048666666666666664,
+   "sends_per_slot": 0.21972222222222224,
+   "sends_per_task": 4.514840182648402,
+   "deliv_per_task": 2.680365296803653,
+   "succ_rate": 1.0,
+   "task_slots": 18.48972602739726,
+   "reps": 6,
+   "slots_per_rep": 3000,
+   "seconds": 2040.9087114334106,
+   "diff_vs_first": 0.006432777777777778,
+   "diff_ci": 0.00043617160381262
+  },
+  {
+   "label": "pull, fine-tuned in AirSim",
+   "sched": "learned",
+   "param": null,
+   "controller": "agent",
+   "ckpt": "runs/air/joint_pull/ckpt_latest.pt",
+   "overrides": {},
+   "reference": false,
+   "J": 0.04579222222222221,
+   "J_ci": 0.0007934013117667387,
+   "J_reps": [
+    0.0466,
+    0.04654666666666666,
+    0.04476333333333333,
+    0.04553666666666667,
+    0.046139999999999994,
+    0.04516666666666667
+   ],
+   "tasks_per_slot": 0.04827777777777778,
+   "sends_per_slot": 0.24855555555555553,
+   "sends_per_task": 5.148446490218642,
+   "deliv_per_task": 2.991944764096663,
+   "succ_rate": 1.0,
+   "task_slots": 18.66283084004603,
+   "reps": 6,
+   "slots_per_rep": 3000,
+   "seconds": 2047.5929851531982,
+   "diff_vs_first": 0.005755555555555553,
+   "diff_ci": 0.0008537693856260474
   }
  ],
  "params": {
